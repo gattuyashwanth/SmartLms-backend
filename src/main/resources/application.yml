@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: SmartLMS
+
+  # ── DataSource (Aiven Cloud MySQL / Local override via env vars) ──
+  datasource:
+    url: jdbc:mysql://${DB_HOST:mysql-1e3b0ced-smartlmsdatabase.j.aivencloud.com}:${DB_PORT:11037}/${DB_NAME:defaultdb}?sslMode=REQUIRED&allowPublicKeyRetrieval=true&serverTimezone=UTC&zeroDateTimeBehavior=convertToNull
+    username: ${DB_USERNAME:avnadmin}
+    password: ${DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # ── File Upload Configuration (for Assignment Submissions & Chat Attachments) ──
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 20MB
+      max-request-size: 25MB
+
+  # ── JPA / Hibernate ────────────────────────────────────────
+  jpa:
+    hibernate:
+      ddl-auto: update          # Automatically creates and updates schema on the online DB
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+# ── Server (Automatically uses Render's dynamic $PORT or fallback to 8008) ──
+server:
+  port: ${PORT:${SERVER_PORT:8008}}
+
+# ── CORS Configuration ───────────────────────────────────────
+cors:
+  # Allows localhost during development and Vercel domains in production
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173,https://*.vercel.app}
+
+# ── JWT Configuration ───────────────────────────────────────
+jwt:
+  # 64-character hexadecimal string representing a 256-bit (32-byte) secret for HMAC-SHA256
+  secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+  expiration: ${JWT_EXPIRATION:86400000}
+
+# ── Logging ─────────────────────────────────────────────────
+logging:
+  level:
+    com.smartlms: ${LOG_LEVEL:INFO}
+    org.hibernate.SQL: ${SQL_LOG_LEVEL:WARN}
+    org.springframework.security: ${SECURITY_LOG_LEVEL:INFO}
+
